@@ -41,11 +41,13 @@ class Download {
         for (const [key, value] of Object.entries(ToReplace)) {
             CustomFilename = CustomFilename.replaceAll(key, value);
         }
+        let addExtensionIfMissing = (main.getUserPreferences().outputFormat.value === "docx")
+            ? DocxPacker.addExtensionIfMissing : EpubPacker.addExtensionIfMissing;
         if (Download.isFileNameIllegalOnWindows(CustomFilename)) {
             ErrorLog.showErrorMessage(UIText.Error.errorIllegalFileName(CustomFilename, Download.illegalWindowsFileNameChars));
-            return EpubPacker.addExtensionIfMissing("IllegalFileName");
+            return addExtensionIfMissing("IllegalFileName");
         }
-        return EpubPacker.addExtensionIfMissing(CustomFilename);
+        return addExtensionIfMissing(CustomFilename);
     }
 
     /** write blob to "Downloads" directory */

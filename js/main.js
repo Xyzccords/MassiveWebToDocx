@@ -146,6 +146,10 @@ var main = (function() {
                 ErrorLog.showErrorMessage(UIText.Error.errorAddToLibraryLibraryAddPageWithChapters);
                 return;
             }
+            if (userPreferences.outputFormat.value !== "epub") {
+                ErrorLog.showErrorMessage("La Library solo funciona con formato de salida EPUB. Cambia \"Formato de salida\" a EPUB, o usa el botón normal de descarga para DOCX.");
+                return;
+            }
         }
 
         ChapterUrlsUI.limitNumOfChapterS(userPreferences.maxChaptersPerEpub.value);
@@ -210,6 +214,10 @@ var main = (function() {
     }
 
     function packEpub(metaInfo) {
+        if (userPreferences.outputFormat.value === "docx") {
+            let docx = new DocxPacker(metaInfo);
+            return docx.assemble(parser.epubItemSupplier());
+        }
         let epubVersion = epubVersionFromPreferences();
         let epub = new EpubPacker(metaInfo, epubVersion);
         return epub.assemble(parser.epubItemSupplier());

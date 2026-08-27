@@ -98,6 +98,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.noDownloadPopup = this.addPreference("noDownloadPopup", "noDownloadPopupCheckbox", false);
         this.writeErrorHistoryToFile = this.addPreference("writeErrorHistoryToFile", "writeErrorHistoryToFileCheckbox", false);
         this.createEpub3 = this.addPreference("createEpub3", "createEpub3Checkbox", false);
+        this.outputFormat = this.addPreference("outputFormat", "outputFormatSelect", "docx");
         this.chaptersPageInChapterList = this.addPreference("chaptersPageInChapterList", "chaptersPageInChapterListCheckbox", false);
         this.autoSelectBTSeriesPage = this.addPreference("autoSelectBTSeriesPage", "autoParserSelectIncludesBTSeriesPageCheckbox", false);
         this.removeAuthorNotes = this.addPreference("removeAuthorNotes", "removeAuthorNotesCheckbox", false);

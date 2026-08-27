@@ -156,6 +156,15 @@
                     </td>
                     <td rowspan="2">   <img id="sampleCoverImg" /></td>
                 </tr>
+                <tr id="outputFormatRow">
+                    <td>Formato de salida</td>
+                    <td>
+                        <select id="outputFormatSelect">
+                            <option value="docx">Word (.docx)</option>
+                            <option value="epub">EPUB</option>
+                        </select>
+                    </td>
+                </tr>
             </table>
 
             <div class="progressSection">
@@ -1046,6 +1055,7 @@
         <script src="js/CoverImageUI.js"></script>
         <script src="js/parsers/SonakoParser.js"></script>
         <script src="js/EpubPacker.js"></script>
+        <script src="js/DocxPacker.js"></script>
         <script src="js/main.js"></script>
         <script src="js/AutoBatch.js"></script>
         <script src="js/MultiUrlBatch.js"></script>
