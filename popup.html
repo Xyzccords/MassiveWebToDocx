@@ -94,6 +94,16 @@
                         <button id="loadAndAnalyseButton">__MSG_button_load_and_analyse__</button>
                     </td>
                 </tr>
+                <tr id="multiUrlBatchRow">
+                    <td colspan="3">
+                        <details>
+                            <summary>Procesar varias novelas de una (opcional)</summary>
+                            <textarea id="multiUrlBatchInput" rows="4" cols="60" placeholder="Una URL de inicio por novela, una por línea"></textarea><br>
+                            <button id="multiUrlBatchButton">Procesar toda la lista</button>
+                            <span id="multiUrlBatchStatus"></span>
+                        </details>
+                    </td>
+                </tr>
                 <tr>
                     <td>__MSG_label_Title__</td>
                     <td><input id="titleInput" type="text" name="titleInput" /></td>
@@ -1038,6 +1048,7 @@
         <script src="js/EpubPacker.js"></script>
         <script src="js/main.js"></script>
         <script src="js/AutoBatch.js"></script>
+        <script src="js/MultiUrlBatch.js"></script>
     </span>
 </body>
 </html>
