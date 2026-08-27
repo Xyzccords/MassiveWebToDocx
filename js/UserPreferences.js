@@ -93,10 +93,14 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.CustomFilename = this.addPreference("CustomFilename", "CustomFilenameInput", "%Filename%");
         this.useSvgForImages = this.addPreference("useSvgForImages", "useSvgForImagesInput", true);
         this.removeNextAndPreviousChapterHyperlinks = this.addPreference("removeNextAndPreviousChapterHyperlinks", "removeNextAndPreviousChapterHyperlinksInput", true);
+        this.contentFilterPhrases = this.addPreference("contentFilterPhrases", "contentFilterPhrasesInput", "");
         this.advancedOptionsVisibleByDefault = this.addPreference("advancedOptionsVisibleByDefault", "advancedOptionsVisibleByDefaultCheckbox", false);
         this.noDownloadPopup = this.addPreference("noDownloadPopup", "noDownloadPopupCheckbox", false);
         this.writeErrorHistoryToFile = this.addPreference("writeErrorHistoryToFile", "writeErrorHistoryToFileCheckbox", false);
         this.createEpub3 = this.addPreference("createEpub3", "createEpub3Checkbox", false);
+        this.outputFormat = this.addPreference("outputFormat", "outputFormatSelect", "docx");
+        this.organizeDownloadsInFolders = this.addPreference("organizeDownloadsInFolders", "organizeDownloadsInFoldersCheckbox", true);
+        this.saveCoverImageSeparately = this.addPreference("saveCoverImageSeparately", "saveCoverImageSeparatelyCheckbox", true);
         this.chaptersPageInChapterList = this.addPreference("chaptersPageInChapterList", "chaptersPageInChapterListCheckbox", false);
         this.autoSelectBTSeriesPage = this.addPreference("autoSelectBTSeriesPage", "autoParserSelectIncludesBTSeriesPageCheckbox", false);
         this.removeAuthorNotes = this.addPreference("removeAuthorNotes", "removeAuthorNotesCheckbox", false);

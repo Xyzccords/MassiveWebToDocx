@@ -41,11 +41,62 @@ class Download {
         for (const [key, value] of Object.entries(ToReplace)) {
             CustomFilename = CustomFilename.replaceAll(key, value);
         }
+        let addExtensionIfMissing = (main.getUserPreferences().outputFormat.value === "docx")
+            ? DocxPacker.addExtensionIfMissing : EpubPacker.addExtensionIfMissing;
         if (Download.isFileNameIllegalOnWindows(CustomFilename)) {
             ErrorLog.showErrorMessage(UIText.Error.errorIllegalFileName(CustomFilename, Download.illegalWindowsFileNameChars));
-            return EpubPacker.addExtensionIfMissing("IllegalFileName");
+            return Download.withNovelFolder(addExtensionIfMissing("IllegalFileName"));
         }
-        return EpubPacker.addExtensionIfMissing(CustomFilename);
+        return Download.withNovelFolder(addExtensionIfMissing(CustomFilename));
+    }
+
+    /**
+     * When "organizeDownloadsInFolders" is on, prefix fileName with a
+     * subfolder named after the novel (chrome.downloads / browser.downloads
+     * create any subfolders in the path automatically, inside the browser's
+     * configured downloads directory).
+     */
+    static withNovelFolder(fileName) {
+        if (!main.getUserPreferences().organizeDownloadsInFolders.value) {
+            return fileName;
+        }
+        let folder = Download.sanitizeFolderName(Download.currentNovelName());
+        return util.isNullOrEmpty(folder) ? fileName : (folder + "/" + fileName);
+    }
+
+    // novelFolder is fixed once per novel when it's loaded; fileNameInput.value itself
+    // gets mutated per-part by AutoBatch/MultiUrlBatch (e.g. "_lote01"), so don't use that.
+    static currentNovelName() {
+        let fileNameInput = document.getElementById("fileNameInput");
+        return util.isNullOrEmpty(fileNameInput.dataset.novelFolder) ? fileNameInput.value : fileNameInput.dataset.novelFolder;
+    }
+
+    static sanitizeFolderName(name) {
+        if (util.isNullOrEmpty(name)) {
+            return "";
+        }
+        return name.replace(/[\\/:*?"<>|]/g, "_").trim();
+    }
+
+    /** Saves the novel's cover image on its own, as "Portada.<ext>", alongside the packed file */
+    static saveCoverImage(coverImageInfo) {
+        if ((coverImageInfo == null) || (coverImageInfo.arraybuffer == null)) {
+            return Promise.resolve();
+        }
+        let userPreferences = main.getUserPreferences();
+        if (!userPreferences.saveCoverImageSeparately.value) {
+            return Promise.resolve();
+        }
+        let novelName = Download.currentNovelName();
+        if (novelName === Download.lastCoverSavedForNovel) {
+            return Promise.resolve(); // already saved for this novel (e.g. an earlier AutoBatch part)
+        }
+        Download.lastCoverSavedForNovel = novelName;
+        let extension = Download.EXTENSION_BY_MEDIA_TYPE[coverImageInfo.mediaType] || "jpg";
+        let fileName = Download.withNovelFolder("Portada." + extension);
+        let blob = new Blob([coverImageInfo.arraybuffer], {type: coverImageInfo.mediaType});
+        return Download.save(blob, fileName, userPreferences.overwriteExistingEpub.value, userPreferences.noDownloadPopup.value)
+            .catch(err => ErrorLog.log(err));
     }
 
     /** write blob to "Downloads" directory */
@@ -147,4 +198,13 @@ class Download {
 
 Download.toCleanup = new Map();
 Download.illegalWindowsFileNameChars = "~/?<>\\:*|\"";
+Download.EXTENSION_BY_MEDIA_TYPE = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "image/bmp": "bmp",
+    "image/svg+xml": "svg"
+};
+Download.lastCoverSavedForNovel = null;
 Download.init();

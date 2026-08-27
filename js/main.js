@@ -77,6 +77,9 @@ var main = (function() {
         setUiFieldToValue("authorInput", metaInfo.author);
         setUiFieldToValue("languageInput", metaInfo.language);
         setUiFieldToValue("fileNameInput", metaInfo.fileName);
+        // remember the novel's own name for the download folder, separate from
+        // fileNameInput's value, which AutoBatch/MultiUrlBatch mutate per-part (e.g. "_lote01")
+        document.getElementById("fileNameInput").dataset.novelFolder = metaInfo.fileName || "";
         setUiFieldToValue("subjectInput", metaInfo.subject);
         setUiFieldToValue("descriptionInput", metaInfo.description);
         setUiFieldToValue("publisherInput", metaInfo.publisher);
@@ -146,6 +149,10 @@ var main = (function() {
                 ErrorLog.showErrorMessage(UIText.Error.errorAddToLibraryLibraryAddPageWithChapters);
                 return;
             }
+            if (userPreferences.outputFormat.value !== "epub") {
+                ErrorLog.showErrorMessage("La Library solo funciona con formato de salida EPUB. Cambia \"Formato de salida\" a EPUB, o usa el botón normal de descarga para DOCX.");
+                return;
+            }
         }
 
         ChapterUrlsUI.limitNumOfChapterS(userPreferences.maxChaptersPerEpub.value);
@@ -157,6 +164,7 @@ var main = (function() {
         parser.onStartCollecting();
         await parser.fetchContent();
         let content = await packEpub(metaInfo);
+        await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
         // Enable button here.  If user cancels save dialog
         // the promise never returns
         window.workInProgress = false;
@@ -210,6 +218,10 @@ var main = (function() {
     }
 
     function packEpub(metaInfo) {
+        if (userPreferences.outputFormat.value === "docx") {
+            let docx = new DocxPacker(metaInfo);
+            return docx.assemble(parser.epubItemSupplier());
+        }
         let epubVersion = epubVersionFromPreferences();
         let epub = new EpubPacker(metaInfo, epubVersion);
         return epub.assemble(parser.epubItemSupplier());
@@ -219,7 +231,7 @@ var main = (function() {
         let errors = ErrorLog.dumpHistory();
         if (userPreferences.writeErrorHistoryToFile.value &&
             !util.isNullOrEmpty(errors)) {
-            let fileName = metaInfoFromControls().fileName + ".ErrorLog.txt";
+            let fileName = Download.withNovelFolder(metaInfoFromControls().fileName + ".ErrorLog.txt");
             let blob = new Blob([errors], {type : "text"});
             return Download.save(blob, fileName)
                 .catch (err => ErrorLog.showErrorMessage(err));

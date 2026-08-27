@@ -94,6 +94,16 @@
                         <button id="loadAndAnalyseButton">__MSG_button_load_and_analyse__</button>
                     </td>
                 </tr>
+                <tr id="multiUrlBatchRow">
+                    <td colspan="3">
+                        <details>
+                            <summary>Procesar varias novelas de una (opcional)</summary>
+                            <textarea id="multiUrlBatchInput" rows="4" cols="60" placeholder="Una URL de inicio por novela, una por línea"></textarea><br>
+                            <button id="multiUrlBatchButton">Procesar toda la lista</button>
+                            <span id="multiUrlBatchStatus"></span>
+                        </details>
+                    </td>
+                </tr>
                 <tr>
                     <td>__MSG_label_Title__</td>
                     <td><input id="titleInput" type="text" name="titleInput" /></td>
@@ -145,6 +155,15 @@
                         <button id="clearCoverImageUrlButton">__MSG_button_Clear_Url__</button>
                     </td>
                     <td rowspan="2">   <img id="sampleCoverImg" /></td>
+                </tr>
+                <tr id="outputFormatRow">
+                    <td>Formato de salida</td>
+                    <td>
+                        <select id="outputFormatSelect">
+                            <option value="docx">Word (.docx)</option>
+                            <option value="epub">EPUB</option>
+                        </select>
+                    </td>
                 </tr>
             </table>
 
@@ -396,6 +415,13 @@
                         <td><input id="removeNextAndPreviousChapterHyperlinksInput" type="checkbox" name="removeNextAndPreviousChapterHyperlinksInput" value="true"></td>
                         <td>__MSG_label_Remove_Next_and_Previous_Chapter_Hyperlinks__</td>
                     </tr>
+                    <tr id="contentFilterPhrasesRow">
+                        <td>Filtrar basura del texto</td>
+                        <td>
+                            <textarea id="contentFilterPhrasesInput" rows="4" cols="60" placeholder="Una frase o /regex/i por línea. Se borra cualquier párrafo cuyo texto la contenga.&#10;Ej: power stone&#10;Ej: deja tu comentario&#10;Ej: /patreon\.com/i"></textarea>
+                            <p style="margin:2px 0 0 0; font-size: smaller;">Cada línea es una frase (sin distinguir mayúsculas) o una <code>/regex/flags</code>. Se elimina el párrafo, ítem de lista o cita completo si coincide.</p>
+                        </td>
+                    </tr>
                     <tr id="advancedOptionsVisibleByDefaultRow">
                         <td><input id="advancedOptionsVisibleByDefaultCheckbox" type="checkbox" name="advancedOptionsVisibleByDefaultCheckbox" value="true"></td>
                         <td>__MSG_label_Advanced_Options_Visible_By_Default__</td>
@@ -413,6 +439,14 @@
                     <tr id="noDownloadPopupFileRow">
                         <td><input id="noDownloadPopupCheckbox" type="checkbox" name="noDownloadPopupCheckbox" value="false"></td>
                         <td>__MSG_label_No_Download_Popup__</td>
+                    </tr>
+                    <tr id="organizeDownloadsInFoldersRow">
+                        <td><input id="organizeDownloadsInFoldersCheckbox" type="checkbox" name="organizeDownloadsInFoldersCheckbox" value="true"></td>
+                        <td>Crear una carpeta por novela (dentro de Descargas)</td>
+                    </tr>
+                    <tr id="saveCoverImageSeparatelyRow">
+                        <td><input id="saveCoverImageSeparatelyCheckbox" type="checkbox" name="saveCoverImageSeparatelyCheckbox" value="true"></td>
+                        <td>Guardar también la portada como Portada.jpg/png</td>
                     </tr>
                     <tr id="disableShiftClickAlertRow">
                       <td><input id="disableShiftClickAlertCheckbox" type="checkbox" name="disableShiftClickAlertCheckbox" value="false"></td>
@@ -1029,8 +1063,10 @@
         <script src="js/CoverImageUI.js"></script>
         <script src="js/parsers/SonakoParser.js"></script>
         <script src="js/EpubPacker.js"></script>
+        <script src="js/DocxPacker.js"></script>
         <script src="js/main.js"></script>
         <script src="js/AutoBatch.js"></script>
+        <script src="js/MultiUrlBatch.js"></script>
     </span>
 </body>
 </html>
