@@ -60,12 +60,15 @@ class Download {
         if (!main.getUserPreferences().organizeDownloadsInFolders.value) {
             return fileName;
         }
-        let fileNameInput = document.getElementById("fileNameInput");
-        // novelFolder is fixed once per novel when it's loaded; fileNameInput.value itself
-        // gets mutated per-part by AutoBatch/MultiUrlBatch (e.g. "_lote01"), so don't use that.
-        let novelName = util.isNullOrEmpty(fileNameInput.dataset.novelFolder) ? fileNameInput.value : fileNameInput.dataset.novelFolder;
-        let folder = Download.sanitizeFolderName(novelName);
+        let folder = Download.sanitizeFolderName(Download.currentNovelName());
         return util.isNullOrEmpty(folder) ? fileName : (folder + "/" + fileName);
+    }
+
+    // novelFolder is fixed once per novel when it's loaded; fileNameInput.value itself
+    // gets mutated per-part by AutoBatch/MultiUrlBatch (e.g. "_lote01"), so don't use that.
+    static currentNovelName() {
+        let fileNameInput = document.getElementById("fileNameInput");
+        return util.isNullOrEmpty(fileNameInput.dataset.novelFolder) ? fileNameInput.value : fileNameInput.dataset.novelFolder;
     }
 
     static sanitizeFolderName(name) {
@@ -84,6 +87,11 @@ class Download {
         if (!userPreferences.saveCoverImageSeparately.value) {
             return Promise.resolve();
         }
+        let novelName = Download.currentNovelName();
+        if (novelName === Download.lastCoverSavedForNovel) {
+            return Promise.resolve(); // already saved for this novel (e.g. an earlier AutoBatch part)
+        }
+        Download.lastCoverSavedForNovel = novelName;
         let extension = Download.EXTENSION_BY_MEDIA_TYPE[coverImageInfo.mediaType] || "jpg";
         let fileName = Download.withNovelFolder("Portada." + extension);
         let blob = new Blob([coverImageInfo.arraybuffer], {type: coverImageInfo.mediaType});
@@ -198,4 +206,5 @@ Download.EXTENSION_BY_MEDIA_TYPE = {
     "image/bmp": "bmp",
     "image/svg+xml": "svg"
 };
+Download.lastCoverSavedForNovel = null;
 Download.init();
