@@ -45,9 +45,46 @@ class Download {
             ? DocxPacker.addExtensionIfMissing : EpubPacker.addExtensionIfMissing;
         if (Download.isFileNameIllegalOnWindows(CustomFilename)) {
             ErrorLog.showErrorMessage(UIText.Error.errorIllegalFileName(CustomFilename, Download.illegalWindowsFileNameChars));
-            return addExtensionIfMissing("IllegalFileName");
+            return Download.withNovelFolder(addExtensionIfMissing("IllegalFileName"));
         }
-        return addExtensionIfMissing(CustomFilename);
+        return Download.withNovelFolder(addExtensionIfMissing(CustomFilename));
+    }
+
+    /**
+     * When "organizeDownloadsInFolders" is on, prefix fileName with a
+     * subfolder named after the novel (chrome.downloads / browser.downloads
+     * create any subfolders in the path automatically, inside the browser's
+     * configured downloads directory).
+     */
+    static withNovelFolder(fileName) {
+        if (!main.getUserPreferences().organizeDownloadsInFolders.value) {
+            return fileName;
+        }
+        let folder = Download.sanitizeFolderName(document.getElementById("fileNameInput").value);
+        return util.isNullOrEmpty(folder) ? fileName : (folder + "/" + fileName);
+    }
+
+    static sanitizeFolderName(name) {
+        if (util.isNullOrEmpty(name)) {
+            return "";
+        }
+        return name.replace(/[\\/:*?"<>|]/g, "_").trim();
+    }
+
+    /** Saves the novel's cover image on its own, as "Portada.<ext>", alongside the packed file */
+    static saveCoverImage(coverImageInfo) {
+        if ((coverImageInfo == null) || (coverImageInfo.arraybuffer == null)) {
+            return Promise.resolve();
+        }
+        let userPreferences = main.getUserPreferences();
+        if (!userPreferences.saveCoverImageSeparately.value) {
+            return Promise.resolve();
+        }
+        let extension = Download.EXTENSION_BY_MEDIA_TYPE[coverImageInfo.mediaType] || "jpg";
+        let fileName = Download.withNovelFolder("Portada." + extension);
+        let blob = new Blob([coverImageInfo.arraybuffer], {type: coverImageInfo.mediaType});
+        return Download.save(blob, fileName, userPreferences.overwriteExistingEpub.value, userPreferences.noDownloadPopup.value)
+            .catch(err => ErrorLog.log(err));
     }
 
     /** write blob to "Downloads" directory */
@@ -149,4 +186,12 @@ class Download {
 
 Download.toCleanup = new Map();
 Download.illegalWindowsFileNameChars = "~/?<>\\:*|\"";
+Download.EXTENSION_BY_MEDIA_TYPE = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "image/bmp": "bmp",
+    "image/svg+xml": "svg"
+};
 Download.init();

@@ -161,6 +161,7 @@ var main = (function() {
         parser.onStartCollecting();
         await parser.fetchContent();
         let content = await packEpub(metaInfo);
+        await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
         // Enable button here.  If user cancels save dialog
         // the promise never returns
         window.workInProgress = false;
@@ -227,7 +228,7 @@ var main = (function() {
         let errors = ErrorLog.dumpHistory();
         if (userPreferences.writeErrorHistoryToFile.value &&
             !util.isNullOrEmpty(errors)) {
-            let fileName = metaInfoFromControls().fileName + ".ErrorLog.txt";
+            let fileName = Download.withNovelFolder(metaInfoFromControls().fileName + ".ErrorLog.txt");
             let blob = new Blob([errors], {type : "text"});
             return Download.save(blob, fileName)
                 .catch (err => ErrorLog.showErrorMessage(err));
