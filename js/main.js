@@ -77,6 +77,9 @@ var main = (function() {
         setUiFieldToValue("authorInput", metaInfo.author);
         setUiFieldToValue("languageInput", metaInfo.language);
         setUiFieldToValue("fileNameInput", metaInfo.fileName);
+        // remember the novel's own name for the download folder, separate from
+        // fileNameInput's value, which AutoBatch/MultiUrlBatch mutate per-part (e.g. "_lote01")
+        document.getElementById("fileNameInput").dataset.novelFolder = metaInfo.fileName || "";
         setUiFieldToValue("subjectInput", metaInfo.subject);
         setUiFieldToValue("descriptionInput", metaInfo.description);
         setUiFieldToValue("publisherInput", metaInfo.publisher);

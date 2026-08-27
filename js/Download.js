@@ -60,7 +60,11 @@ class Download {
         if (!main.getUserPreferences().organizeDownloadsInFolders.value) {
             return fileName;
         }
-        let folder = Download.sanitizeFolderName(document.getElementById("fileNameInput").value);
+        let fileNameInput = document.getElementById("fileNameInput");
+        // novelFolder is fixed once per novel when it's loaded; fileNameInput.value itself
+        // gets mutated per-part by AutoBatch/MultiUrlBatch (e.g. "_lote01"), so don't use that.
+        let novelName = util.isNullOrEmpty(fileNameInput.dataset.novelFolder) ? fileNameInput.value : fileNameInput.dataset.novelFolder;
+        let folder = Download.sanitizeFolderName(novelName);
         return util.isNullOrEmpty(folder) ? fileName : (folder + "/" + fileName);
     }
 
