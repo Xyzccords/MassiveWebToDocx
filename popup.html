@@ -396,6 +396,13 @@
                         <td><input id="removeNextAndPreviousChapterHyperlinksInput" type="checkbox" name="removeNextAndPreviousChapterHyperlinksInput" value="true"></td>
                         <td>__MSG_label_Remove_Next_and_Previous_Chapter_Hyperlinks__</td>
                     </tr>
+                    <tr id="contentFilterPhrasesRow">
+                        <td>Filtrar basura del texto</td>
+                        <td>
+                            <textarea id="contentFilterPhrasesInput" rows="4" cols="60" placeholder="Una frase o /regex/i por línea. Se borra cualquier párrafo cuyo texto la contenga.&#10;Ej: power stone&#10;Ej: deja tu comentario&#10;Ej: /patreon\.com/i"></textarea>
+                            <p style="margin:2px 0 0 0; font-size: smaller;">Cada línea es una frase (sin distinguir mayúsculas) o una <code>/regex/flags</code>. Se elimina el párrafo, ítem de lista o cita completo si coincide.</p>
+                        </td>
+                    </tr>
                     <tr id="advancedOptionsVisibleByDefaultRow">
                         <td><input id="advancedOptionsVisibleByDefaultCheckbox" type="checkbox" name="advancedOptionsVisibleByDefaultCheckbox" value="true"></td>
                         <td>__MSG_label_Advanced_Options_Visible_By_Default__</td>

@@ -180,6 +180,7 @@ class Parser {
         util.removeUnwantedWordpressElements(element);
         util.removeMicrosoftWordCrapElements(element);
         util.removeShareLinkElements(element);
+        util.removeContentMatchingUserFilters(element, this.userPreferences.contentFilterPhrases.value);
         util.removeLeadingWhiteSpace(element);
     }
 

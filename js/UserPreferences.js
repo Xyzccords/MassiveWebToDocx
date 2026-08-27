@@ -93,6 +93,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.CustomFilename = this.addPreference("CustomFilename", "CustomFilenameInput", "%Filename%");
         this.useSvgForImages = this.addPreference("useSvgForImages", "useSvgForImagesInput", true);
         this.removeNextAndPreviousChapterHyperlinks = this.addPreference("removeNextAndPreviousChapterHyperlinks", "removeNextAndPreviousChapterHyperlinksInput", true);
+        this.contentFilterPhrases = this.addPreference("contentFilterPhrases", "contentFilterPhrasesInput", "");
         this.advancedOptionsVisibleByDefault = this.addPreference("advancedOptionsVisibleByDefault", "advancedOptionsVisibleByDefaultCheckbox", false);
         this.noDownloadPopup = this.addPreference("noDownloadPopup", "noDownloadPopupCheckbox", false);
         this.writeErrorHistoryToFile = this.addPreference("writeErrorHistoryToFile", "writeErrorHistoryToFileCheckbox", false);

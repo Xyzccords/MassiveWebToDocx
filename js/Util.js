@@ -314,6 +314,48 @@ const util = (function() {
         removeChildElementsMatchingSelector(contentElement, "div.sharepost");
     }
 
+    // Strip paragraphs/list items/quotes whose text matches one of the user's
+    // own "junk" filters (e.g. "power stones", translator begging, spam
+    // comments). One filter per line in rawFilterText; a line wrapped in
+    // /like/this/ is treated as a regex (case-insensitive plain text otherwise).
+    function removeContentMatchingUserFilters(element, rawFilterText) {
+        let matchers = parseUserFilterPatterns(rawFilterText);
+        if (matchers.length === 0) {
+            return;
+        }
+        let candidates = ["p", "li", "blockquote"]
+            .flatMap(tagName => getElements(element, tagName));
+        for (let candidate of candidates) {
+            if (candidate.isConnected && matchers.some(matches => matches(candidate.textContent))) {
+                candidate.remove();
+            }
+        }
+    }
+
+    function parseUserFilterPatterns(rawFilterText) {
+        if (isNullOrEmpty(rawFilterText)) {
+            return [];
+        }
+        return rawFilterText.split("\n")
+            .map(line => line.trim())
+            .filter(line => line.length !== 0)
+            .map(makeUserFilterMatcher);
+    }
+
+    function makeUserFilterMatcher(line) {
+        let regexLiteral = line.match(/^\/(.*)\/([a-z]*)$/i);
+        if (regexLiteral !== null) {
+            try {
+                let regex = new RegExp(regexLiteral[1], regexLiteral[2]);
+                return (text) => regex.test(text);
+            } catch (err) {
+                // not a valid regex, fall through to treating it as plain text
+            }
+        }
+        let needle = line.toLowerCase();
+        return (text) => text.toLowerCase().includes(needle);
+    }
+
     function convertPreTagToPTags(dom, element, splitOn) {
         let normalizeEol = (s) => s.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 
@@ -1194,6 +1236,7 @@ const util = (function() {
         removeHeightAndWidthStyle: removeHeightAndWidthStyle,
         removeUnwantedWordpressElements: removeUnwantedWordpressElements,
         removeShareLinkElements: removeShareLinkElements,
+        removeContentMatchingUserFilters: removeContentMatchingUserFilters,
         convertPreTagToPTags: convertPreTagToPTags,
         prepForConvertToXhtml: prepForConvertToXhtml,
         replaceCenterTags: replaceCenterTags,
