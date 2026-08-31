@@ -51,7 +51,7 @@ class AutoBatch {
                 rangeEnd.selectedIndex = endIdx;
                 ChapterUrlsUI.onRangeChanged();
 
-                fileNameInput.value = `${baseFileName}_${chapterRange}`;
+                fileNameInput.value = chapterRange;
 
                 if (statusSpan) {
                     statusSpan.textContent =
