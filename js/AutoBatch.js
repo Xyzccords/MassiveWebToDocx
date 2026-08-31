@@ -45,17 +45,17 @@ class AutoBatch {
         try {
             for (let i = 0; i < total; i += batchSize) {
                 let endIdx = Math.min(i + batchSize - 1, total - 1);
-                let loteNum = Math.floor(i / batchSize) + 1;
+                let chapterRange = `${i + 1}-${endIdx + 1}`;
 
                 rangeStart.selectedIndex = i;
                 rangeEnd.selectedIndex = endIdx;
                 ChapterUrlsUI.onRangeChanged();
 
-                fileNameInput.value = `${baseFileName}_lote${String(loteNum).padStart(2, "0")}`;
+                fileNameInput.value = `${baseFileName}_${chapterRange}`;
 
                 if (statusSpan) {
                     statusSpan.textContent =
-                        `Procesando lote ${loteNum}: capítulos ${i + 1}-${endIdx + 1} de ${total}...`;
+                        `Procesando capítulos ${chapterRange} de ${total}...`;
                 }
 
                 document.getElementById("packEpubButton").click();
