@@ -257,14 +257,25 @@ class Parser {
         return Parser.extractTitleDefault(dom);
     }
 
-    // strips a leading "Chapter 45:", "Ch. 45 -", "Capítulo 45", etc. from a chapter title,
-    // when the user has ticked "Remove Chapter Number"
+    // strips a leading "Chapter 45:", "Ch. 45 -", "Capítulo 45", or a bare leading
+    // "1: "/"1 - " index number, from a chapter title, when the user has ticked
+    // "Remove Chapter Number". Runs repeatedly, so "1: Chapter 1: HOLA" -> "HOLA".
     static stripChapterNumberPrefix(title) {
         if (util.isNullOrEmpty(title)) {
             return title;
         }
-        let stripped = title.replace(/^\s*(chapter|chap\.?|ch\.?|cap[ií]tulo|cap\.?)\s*\d+[a-z]?\s*[:.\-–—]?\s*/i, "");
-        return util.isNullOrEmpty(stripped) ? title : stripped;
+        // a bare number needs a separator (":" "-" ".") to count as a prefix, otherwise
+        // a real title that just starts with a number (e.g. "99 Nights") would get mangled
+        const prefixRe = /^\s*(?:(?:chapter|chap\.?|ch\.?|cap[ií]tulo|cap\.?)\s*\d+[a-z]?\s*[:.\-–—]?\s*|\d+[a-z]?\s*[:.\-–—]\s*)/i;
+        let result = title;
+        while (prefixRe.test(result)) {
+            let stripped = result.replace(prefixRe, "");
+            if (util.isNullOrEmpty(stripped) || stripped === result) {
+                break;
+            }
+            result = stripped;
+        }
+        return result;
     }
 
     extractTitle(dom) {
