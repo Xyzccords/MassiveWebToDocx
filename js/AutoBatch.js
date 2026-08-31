@@ -41,11 +41,22 @@ class AutoBatch {
         let baseFileName = fileNameInput.value || "novela";
 
         button.disabled = true;
+        let skippedRange = null;
 
         try {
             for (let i = 0; i < total; i += batchSize) {
                 let endIdx = Math.min(i + batchSize - 1, total - 1);
+                let countInBatch = endIdx - i + 1;
                 let chapterRange = `${i + 1}-${endIdx + 1}`;
+
+                // don't pack a trailing group that doesn't have a full batchSize chapters yet
+                // (e.g. batchSize=20 but only 181-199 are available so far) -- wait for more
+                // chapters to show up instead. Only exception: the whole novel is smaller than
+                // one batch, in which case there's nothing else to do but pack what there is.
+                if (countInBatch < batchSize && i > 0) {
+                    skippedRange = `${chapterRange} (${countInBatch}/${batchSize})`;
+                    break;
+                }
 
                 rangeStart.selectedIndex = i;
                 rangeEnd.selectedIndex = endIdx;
@@ -67,7 +78,9 @@ class AutoBatch {
 
             fileNameInput.value = baseFileName;
             if (statusSpan) {
-                statusSpan.textContent = "Listo. Revisa tu carpeta de descargas.";
+                statusSpan.textContent = skippedRange
+                    ? `Listo. Capítulos ${skippedRange} quedaron incompletos, no se procesaron.`
+                    : "Listo. Revisa tu carpeta de descargas.";
             }
         } finally {
             button.disabled = false;
