@@ -257,6 +257,16 @@ class Parser {
         return Parser.extractTitleDefault(dom);
     }
 
+    // strips a leading "Chapter 45:", "Ch. 45 -", "Capítulo 45", etc. from a chapter title,
+    // when the user has ticked "Remove Chapter Number"
+    static stripChapterNumberPrefix(title) {
+        if (util.isNullOrEmpty(title)) {
+            return title;
+        }
+        let stripped = title.replace(/^\s*(chapter|chap\.?|ch\.?|cap[ií]tulo|cap\.?)\s*\d+[a-z]?\s*[:.\-–—]?\s*/i, "");
+        return util.isNullOrEmpty(stripped) ? title : stripped;
+    }
+
     extractTitle(dom) {
         let title = this.extractTitleImpl(dom);
         if (title == null) {
@@ -479,6 +489,9 @@ class Parser {
             }
             chapters = this.cleanWebPageUrls(chapters);
             chapters?.forEach(chapter => chapter.title = chapter.title?.trim());
+            if (this.userPreferences.removeChapterNumber.value) {
+                chapters?.forEach(chapter => chapter.title = Parser.stripChapterNumberPrefix(chapter.title));
+            }
             await this.userPreferences.readingList.deselectOldChapters(url, chapters);
             chapterUrlsUI.populateChapterUrlsTable(chapters);
             if (0 < chapters.length) {

@@ -64,6 +64,9 @@ class DocxPacker {
     //======================================================================
 
     indexImages(epubItemSupplier) {
+        if (main.getUserPreferences().skipImages.value) {
+            return; // "Skip Images" ticked: don't embed anything, including the cover
+        }
         for (let item of epubItemSupplier.manifestItems()) {
             if (item.arraybuffer == null) {
                 continue; // not an image (e.g. it's a chapter)
@@ -103,11 +106,14 @@ class DocxPacker {
     //======================================================================
 
     buildBodyXml(epubItemSupplier) {
+        let userPreferences = main.getUserPreferences();
         let parts = [];
-        if (epubItemSupplier.hasCoverImageFile()) {
+        if (!userPreferences.skipImages.value && epubItemSupplier.hasCoverImageFile()) {
             parts.push(this.buildCoverPageXml(epubItemSupplier.coverImageInfo));
         }
-        parts.push(DocxPacker.buildTocPageXml(this.metaInfo.title));
+        if (userPreferences.addInformationPage.value) {
+            parts.push(DocxPacker.buildTocPageXml(this.metaInfo.title));
+        }
 
         let isFirstChapter = true;
         for (let chapter of epubItemSupplier.spineItems()) {
