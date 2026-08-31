@@ -104,7 +104,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.chaptersPageInChapterList = this.addPreference("chaptersPageInChapterList", "chaptersPageInChapterListCheckbox", false);
         this.autoSelectBTSeriesPage = this.addPreference("autoSelectBTSeriesPage", "autoParserSelectIncludesBTSeriesPageCheckbox", false);
         this.removeAuthorNotes = this.addPreference("removeAuthorNotes", "removeAuthorNotesCheckbox", false);
-        this.removeChapterNumber = this.addPreference("removeChapterNumber", "removeChapterNumberCheckbox", false);
+        this.removeChapterNumber = this.addPreference("removeChapterNumber", "removeChapterNumberCheckbox", true);
         this.removeOriginal = this.addPreference("removeOriginal", "removeOriginalCheckbox", true);
         this.selectTranslationAi = this.addPreference("selectTranslationAi", "selectTranslationAiCheckbox", false);
         this.selectRetryLonger = this.addPreference("selectRetryLonger", "selectRetryLongerCheckbox", false);
@@ -113,7 +113,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.maxChaptersPerEpub = this.addPreference("maxChaptersPerEpub", "maxChaptersPerEpubTag", "10,000");
         this.manualDelayPerChapter = this.addPreference("manualDelayPerChapter", "manualDelayPerChapterTag", "0");
         this.overrideMinimumDelay = this.addPreference("overrideMinimumDelay", "overrideMinimumDelayCheckbox", false);
-        this.skipImages = this.addPreference("skipImages", "skipImagesCheckbox", false);
+        this.skipImages = this.addPreference("skipImages", "skipImagesCheckbox", true);
         this.compressImages = this.addPreference("compressImages", "compressImagesCheckbox", false);
         this.compressImagesJpgCover = this.addPreference("compressImagesJpgCover", "compressImagesJpgCoverCheckbox", false);
         this.compressImagesType = this.addPreference("compressImagesType", "compressImagesType", "jpg");
@@ -121,7 +121,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.overwriteExistingEpub = this.addPreference("overwriteExistingEpub", "overwriteEpubWhenDuplicateFilenameCheckbox", false);
         this.themeColor = this.addPreference("themeColor", "themeColorTag", "");
         this.useFullTitle = this.addPreference("useFullTitle", "useFullTitleAsFileNameCheckbox", false);
-        this.addInformationPage = this.addPreference("addInformationPage", "addInformationPageToEpubCheckbox", true);
+        this.addInformationPage = this.addPreference("addInformationPage", "addInformationPageToEpubCheckbox", false);
         this.lesstags = this.addPreference("lesstags", "lesstagsCheckbox", true);
         this.autosearchmetadata = this.addPreference("autosearchmetadata", "autosearchmetadataCheckbox", false);
         this.noAdditionalMetadata = this.addPreference("noAdditionalMetadata", "noAdditionalMetadataCheckbox", true);
