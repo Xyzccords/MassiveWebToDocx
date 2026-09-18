@@ -7,13 +7,48 @@ class Wenku8Parser extends Parser {
         super();
     }
 
-    getChapterUrls(dom) {
+    // wenku8.net is behind Cloudflare and rejects requests without a Referer
+    // pointing at itself, same trick used for other sites in this extension.
+    setRefererOnWebRequests = (() => {
+        let done = false;
+
+        return async () => {
+            if (done) {
+                return;
+            }
+            done = true;
+
+            const fetchRules = [
+                {
+                    "id": 1,
+                    "priority": 1,
+                    "condition": {
+                        "urlFilter": "wenku8.net",
+                    },
+                    "action": {
+                        "type": "modifyHeaders",
+                        "requestHeaders": [
+                            {
+                                "header": "Referer",
+                                "operation": "set",
+                                "value": "https://www.wenku8.net/"
+                            },
+                        ]
+                    }
+                }
+            ];
+
+            await HttpClient.setDeclarativeNetRequestRules(fetchRules);
+        };
+    })();
+
+    async getChapterUrls(dom) {
+        await this.setRefererOnWebRequests();
         let id = Wenku8Parser.extractBookId(dom);
-        let tocUrl = ` https://www.wenku8.net/modules/article/reader.php?aid=${id}`;
-        return HttpClient.wrapFetch(tocUrl, this.makeOptions()).then(function(xhr) {
-            let menu = xhr.responseXML.querySelector("table");
-            return Promise.resolve(util.hyperlinksToChapterList(menu));
-        });
+        let tocUrl = `https://www.wenku8.net/modules/article/reader.php?aid=${id}`;
+        let xhr = await HttpClient.wrapFetch(tocUrl, this.makeOptions());
+        let menu = xhr.responseXML.querySelector("table");
+        return util.hyperlinksToChapterList(menu);
     }
 
     static extractBookId(dom) {
