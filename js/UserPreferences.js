@@ -90,7 +90,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.highestResolutionImages = this.addPreference("highestResolutionImages", "highestResolutionImagesCheckboxInput", true);
         this.unSuperScriptAlternateTranslations = this.addPreference("unSuperScriptAlternateTranslations", "unSuperScriptCheckboxInput", false);
         this.styleSheet = this.addPreference("styleSheet", "stylesheetInput", EpubMetaInfo.getDefaultStyleSheet());
-        this.CustomFilename = this.addPreference("CustomFilename", "CustomFilenameInput", "%Filename%");
+        this.CustomFilename = this.addPreference("CustomFilename", "CustomFilenameInput", "%Chapter_Range%");
         this.useSvgForImages = this.addPreference("useSvgForImages", "useSvgForImagesInput", true);
         this.removeNextAndPreviousChapterHyperlinks = this.addPreference("removeNextAndPreviousChapterHyperlinks", "removeNextAndPreviousChapterHyperlinksInput", true);
         this.contentFilterPhrases = this.addPreference("contentFilterPhrases", "contentFilterPhrasesInput", "");

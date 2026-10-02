@@ -37,6 +37,7 @@ class Download {
             "%Chapters_Count%":  document.getElementById("spanChapterCount").innerHTML,
             "%Chapters_Downloaded%":  document.getElementById("fetchProgress").value-1,
             "%Filename%": document.getElementById("fileNameInput").value,
+            "%Chapter_Range%": Download.selectedChapterRange(),
         };
         for (const [key, value] of Object.entries(ToReplace)) {
             CustomFilename = CustomFilename.replaceAll(key, value);
@@ -69,6 +70,18 @@ class Download {
     static currentNovelName() {
         let fileNameInput = document.getElementById("fileNameInput");
         return util.isNullOrEmpty(fileNameInput.dataset.novelFolder) ? fileNameInput.value : fileNameInput.dataset.novelFolder;
+    }
+
+    // "1-20" style range of whatever chapters are currently selected in the
+    // First/Last Chapter dropdowns (AutoBatch moves these before packing each
+    // part, so this stays correct per-part without any extra bookkeeping).
+    static selectedChapterRange() {
+        let rangeStart = document.getElementById("selectRangeStartChapter");
+        let rangeEnd = document.getElementById("selectRangeEndChapter");
+        if ((rangeStart.selectedIndex < 0) || (rangeEnd.selectedIndex < 0)) {
+            return document.getElementById("fileNameInput").value;
+        }
+        return `${rangeStart.selectedIndex + 1}-${rangeEnd.selectedIndex + 1}`;
     }
 
     static sanitizeFolderName(name) {
