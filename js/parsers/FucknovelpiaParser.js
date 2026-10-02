@@ -5,10 +5,10 @@ parserFactory.register("fucknovelpia.com", () => new FucknovelpiaParser());
 class FucknovelpiaParser extends Parser {
     constructor() {
         super();
-        // site's own reader JS warns about "anti-bot blocks" past ~10 chapter
-        // navigations/minute; keep requests polite even though that warning
-        // is client-side only.
-        this.minimumThrottle = 1000;
+        // site enforces a real rate limit server-side (confirmed: returns 429
+        // "slow down" past a certain request rate), on top of its own
+        // client-side "anti-bot" navigation warning. Keep requests slow.
+        this.minimumThrottle = 3000;
     }
 
     // chapter list is already fully rendered server-side on the novel page,
