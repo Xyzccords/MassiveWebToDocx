@@ -7,8 +7,24 @@ class FucknovelpiaParser extends Parser {
         super();
         // site enforces a real rate limit server-side (confirmed: returns 429
         // "slow down" past a certain request rate), on top of its own
-        // client-side "anti-bot" navigation warning. Keep requests slow.
-        this.minimumThrottle = 3000;
+        // client-side "anti-bot" navigation warning. 3s/chapter still hit the
+        // wall past ~40 chapters and stayed 429 through the full built-in
+        // backoff ladder (120+60+30+15s), so the limit is a rolling window,
+        // not just requests-per-second. Start slower, and back off further
+        // on our own if it happens again (see fetchChapter below).
+        this.minimumThrottle = 8000;
+    }
+
+    // default Parser.fetchChapter, but if the site still 429s us after the
+    // built-in retry ladder is exhausted, slow all future chapters down for
+    // the rest of this run instead of just failing again on the next retry.
+    async fetchChapter(url) {
+        try {
+            return (await HttpClient.wrapFetch(url)).responseXML;
+        } catch (error) {
+            this.minimumThrottle = Math.min(this.minimumThrottle * 2, 60000);
+            throw error;
+        }
     }
 
     // chapter list is already fully rendered server-side on the novel page,
