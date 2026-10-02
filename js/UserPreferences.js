@@ -95,7 +95,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.removeNextAndPreviousChapterHyperlinks = this.addPreference("removeNextAndPreviousChapterHyperlinks", "removeNextAndPreviousChapterHyperlinksInput", true);
         this.contentFilterPhrases = this.addPreference("contentFilterPhrases", "contentFilterPhrasesInput", "");
         this.advancedOptionsVisibleByDefault = this.addPreference("advancedOptionsVisibleByDefault", "advancedOptionsVisibleByDefaultCheckbox", false);
-        this.noDownloadPopup = this.addPreference("noDownloadPopup", "noDownloadPopupCheckbox", false);
+        this.noDownloadPopup = this.addPreference("noDownloadPopup", "noDownloadPopupCheckbox", true);
         this.writeErrorHistoryToFile = this.addPreference("writeErrorHistoryToFile", "writeErrorHistoryToFileCheckbox", false);
         this.createEpub3 = this.addPreference("createEpub3", "createEpub3Checkbox", false);
         this.outputFormat = this.addPreference("outputFormat", "outputFormatSelect", "docx");
@@ -120,7 +120,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.compressImagesMaxResolution = this.addPreference("compressImagesMaxResolution", "compressImagesMaxResolutionTag", "1080");
         this.overwriteExistingEpub = this.addPreference("overwriteExistingEpub", "overwriteEpubWhenDuplicateFilenameCheckbox", false);
         this.themeColor = this.addPreference("themeColor", "themeColorTag", "");
-        this.useFullTitle = this.addPreference("useFullTitle", "useFullTitleAsFileNameCheckbox", false);
+        this.useFullTitle = this.addPreference("useFullTitle", "useFullTitleAsFileNameCheckbox", true);
         this.addInformationPage = this.addPreference("addInformationPage", "addInformationPageToEpubCheckbox", false);
         this.lesstags = this.addPreference("lesstags", "lesstagsCheckbox", true);
         this.autosearchmetadata = this.addPreference("autosearchmetadata", "autosearchmetadataCheckbox", false);
