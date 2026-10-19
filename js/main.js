@@ -162,10 +162,17 @@ var main = (function() {
         main.getPackEpubButton().disabled = true;
         replaceLibAddToLibrary();
         parser.onStartCollecting();
+        await Download.saveNovelLink();
+        if (userPreferences.saveCoverImageSeparately.value
+                && (Download.currentNovelName() !== Download.lastCoverSavedForNovel)) {
+            // save the cover before fetching any chapters, so it (and the link above) are
+            // already on disk even if a long run later fails partway through
+            parser.imageCollector.setCoverImageUrl(CoverImageUI.getCoverImageUrl());
+            await parser.imageCollector.fetchImages(() => { }, document.getElementById("startingUrlInput").value);
+            await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
+        }
         await parser.fetchContent();
         let content = await packEpub(metaInfo);
-        await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
-        await Download.saveNovelLink();
         // Enable button here.  If user cancels save dialog
         // the promise never returns
         window.workInProgress = false;
