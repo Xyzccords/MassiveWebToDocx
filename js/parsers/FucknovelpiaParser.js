@@ -15,16 +15,59 @@ class FucknovelpiaParser extends Parser {
         this.minimumThrottle = 8000;
     }
 
-    // default Parser.fetchChapter, but if the site still 429s us after the
-    // built-in retry ladder is exhausted, slow all future chapters down for
-    // the rest of this run instead of just failing again on the next retry.
+    // Instead of a bare fetch() straight to chapter.php (which looks exactly like a
+    // scraper: no CSS/JS/images alongside it, referrer of chrome-extension://...),
+    // load the chapter in a real background tab, same as a human clicking into it
+    // would. It's still one request to chapter.php, but it's a real navigation with
+    // the normal page requests, cookies and referer chain riding along with it.
     async fetchChapter(url) {
         try {
-            return (await HttpClient.wrapFetch(url)).responseXML;
+            let html = await FucknovelpiaParser.fetchChapterViaTab(url);
+            let dom = new DOMParser().parseFromString(html, "text/html");
+            util.setBaseTag(url, dom);
+            return dom;
         } catch (error) {
+            // site still 429'd us after the built-in retry ladder is exhausted:
+            // slow all future chapters down for the rest of this run instead of
+            // just failing again on the next retry.
             this.minimumThrottle = Math.min(this.minimumThrottle * 2, 60000);
             throw error;
         }
+    }
+
+    static async fetchChapterViaTab(url) {
+        let tabId = await util.createChapterTab(url);
+        try {
+            await FucknovelpiaParser.waitForTabLoad(tabId);
+            let results = await chrome.scripting.executeScript({
+                target: {tabId: tabId},
+                func: () => document.documentElement.outerHTML
+            });
+            return results[0].result;
+        } finally {
+            await new Promise(resolve => chrome.tabs.remove(tabId, resolve));
+        }
+    }
+
+    static waitForTabLoad(tabId) {
+        return new Promise((resolve) => {
+            let done = false;
+            let timeoutId = setTimeout(finish, 20000);
+            function finish() {
+                if (!done) {
+                    done = true;
+                    clearTimeout(timeoutId);
+                    chrome.tabs.onUpdated.removeListener(listener);
+                    resolve();
+                }
+            }
+            function listener(updatedTabId, changeInfo) {
+                if (updatedTabId === tabId && changeInfo.status === "complete") {
+                    finish();
+                }
+            }
+            chrome.tabs.onUpdated.addListener(listener);
+        });
     }
 
     // chapter list is already fully rendered server-side on the novel page,
