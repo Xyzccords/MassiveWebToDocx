@@ -63,6 +63,33 @@ progress {
     display: none;
 }
 
+tr.sectionHeaderRow td {
+    padding-top: 16px;
+    padding-bottom: 4px;
+    font-weight: bold;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #888;
+    border-bottom: 1px solid #CCC;
+}
+
+tr.sectionHeaderRow:first-child td {
+    padding-top: 4px;
+}
+
+#advancedOptionsTable tr > td,
+#AdditionalMetadatatable tr > td,
+#inputTable tr > td {
+    padding: 4px 8px;
+}
+
+#inputTable tr > td:first-child,
+#AdditionalMetadatatable tr > td:first-child,
+#advancedOptionsTable tr > td:first-child {
+    white-space: nowrap;
+}
+
 table.chapterList {
     width: 100%;
 }

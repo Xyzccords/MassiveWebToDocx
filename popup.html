@@ -324,6 +324,7 @@
                     </tr>
                 </table>
                 <table id="advancedOptionsTable">
+                    <tr class="sectionHeaderRow"><td colspan="3">Formato y nombres de archivo</td></tr>
                     <tr>
                         <td><input id="ShowMoreMetadataOptionsCheckbox" type="checkbox" name="ShowMoreMetadataOptionsCheckbox" value="true"></td>
                         <td>__MSG_label_Show_More_Metadata_Options__</td>
@@ -337,28 +338,44 @@
                         <td>__MSG_label_Translator__</td>
                         <td><input id="translatorInput" type="text" name="translatorInput" size="80" /></td>
                     </tr>
-                    <tr>
-                        <td>__MSG_label_Theme__</td>
-                        <td>
-                            <select id="themeColorTag">
-                                <option class="i18n" value="LightMode">__MSG_option_ID_Theme_Always_Light__</option>
-                                <option class="i18n" value="DarkMode">__MSG_option_ID_Theme_Always_Dark__</option>
-                                <option class="i18n" selected="true" value="">__MSG_option_ID_Theme_OS_Selection__</option>
-                            </select>
-                        </td>
-                    </tr>
                     <tr id="fileAuthorAsRow" hidden="true">
                         <td>__MSG_label_File_Author_as__</td>
                         <td><input id="fileAuthorAsInput" type="text" name="fileAuthorAsInput" size="80"></td>
                     </tr>
-                    <tr id="styleSheetRow" hidden="true">
-                        <td>__MSG_label_Stylesheet__</td>
-                        <td><textarea id="stylesheetInput" rows="6" cols="60"></textarea></td>
+                    <tr id="useFullTitleAsFileName">
+                        <td><input id="useFullTitleAsFileNameCheckbox" type="checkbox" name="useFullTitleAsFileNameCheckbox" value="false"></td>
+                        <td>__MSG_label_Use_Full_Title_As_File_Name__</td>
                     </tr>
-                    <tr id="stylesheetToDefaultRow" hidden="true">
-                        <td></td>
-                        <td><button id="stylesheetToDefaultButton">__MSG_button_Reset_stylesheet__</button></td>
+                    <tr id="overwriteEpubWhenDuplicateFilename">
+                        <td><input id="overwriteEpubWhenDuplicateFilenameCheckbox" type="checkbox" name="overwriteEpubWhenDuplicateFilenameCheckbox" value="false"></td>
+                        <td>__MSG_label_Overwrite_Epub_When_Filename_Duplicte__</td>
                     </tr>
+                    <tr id="organizeDownloadsInFoldersRow">
+                        <td><input id="organizeDownloadsInFoldersCheckbox" type="checkbox" name="organizeDownloadsInFoldersCheckbox" value="true"></td>
+                        <td>Crear una carpeta por novela (dentro de Descargas)</td>
+                    </tr>
+                    <tr id="noDownloadPopupFileRow">
+                        <td><input id="noDownloadPopupCheckbox" type="checkbox" name="noDownloadPopupCheckbox" value="false"></td>
+                        <td>__MSG_label_No_Download_Popup__</td>
+                    </tr>
+                    <tr id="createEpub3FileRow" hidden="true">
+                        <td><input id="createEpub3Checkbox" type="checkbox" name="createEpub3Checkbox" value="false"></td>
+                        <td>__MSG_label_Create_Epub_3__</td>
+                    </tr>
+
+                    <tr class="sectionHeaderRow"><td colspan="3">Lista maestra de enlaces</td></tr>
+                    <tr id="linkListChannelRow">
+                        <td>Guardar enlace en la lista de</td>
+                        <td>
+                            <select id="linkListChannelSelect">
+                                <option value="">Ninguna</option>
+                                <option value="StellarGameFic">StellarGameFic</option>
+                                <option value="LaAudiotecadeXyzccords">LaAudiotecadeXyzccords</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr class="sectionHeaderRow"><td colspan="3">Imágenes</td></tr>
                     <tr id="skipImagesRow">
                         <td><input id="skipImagesCheckbox" type="checkbox" name="skipImagesCheckbox" value="true"></td>
                         <td>__MSG_label_Skip_Images__</td>
@@ -405,14 +422,24 @@
                         </table>
                     </td>
                     </tr>
-                    <tr id="unSuperScriptAlternateTranslations" hidden="true">
-                        <td><input id="unSuperScriptCheckboxInput" type="checkbox" name="unSuperScriptCheckboxInput" value="true"></td>
-                        <td>__MSG_label_Remove_Superscript_From_Alternate_Translations__</td>
-                    </tr>
                     <tr id="useSvgForImages">
                         <td><input id="useSvgForImagesInput" type="checkbox" name="useSvgForImagesInput" value="true"></td>
                         <td>__MSG_label_Use_SVG_for_Images__</td>
                     </tr>
+                    <tr id="saveCoverImageSeparatelyRow">
+                        <td><input id="saveCoverImageSeparatelyCheckbox" type="checkbox" name="saveCoverImageSeparatelyCheckbox" value="true"></td>
+                        <td>Guardar también la portada como Portada.jpg/png</td>
+                    </tr>
+                    <tr id="disableImageResErrorRow">
+                      <td><input id="disableImageResErrorCheckbox" type="checkbox" name="disableImageResErrorCheckbox" value="false"></td>
+                      <td>__MSG_label_Disable_Image_Res_Error__</td>
+                    </tr>
+                    <tr id="disableWebpImageFormatErrorRow">
+                      <td><input id="disableWebpImageFormatErrorCheckbox" type="checkbox" name="disableWebpImageFormatErrorCheckbox" value="false"></td>
+                      <td>__MSG_label_Disable_Webp_Image_Format_Error__</td>
+                    </tr>
+
+                    <tr class="sectionHeaderRow"><td colspan="3">Contenido del capítulo</td></tr>
                     <tr id="removeNextAndPreviousChapterHyperlinks">
                         <td><input id="removeNextAndPreviousChapterHyperlinksInput" type="checkbox" name="removeNextAndPreviousChapterHyperlinksInput" value="true"></td>
                         <td>__MSG_label_Remove_Next_and_Previous_Chapter_Hyperlinks__</td>
@@ -424,60 +451,6 @@
                             <p style="margin:2px 0 0 0; font-size: smaller;">Cada línea es una frase (sin distinguir mayúsculas) o una <code>/regex/flags</code>. Se elimina el párrafo, ítem de lista o cita completo si coincide.</p>
                         </td>
                     </tr>
-                    <tr id="advancedOptionsVisibleByDefaultRow">
-                        <td><input id="advancedOptionsVisibleByDefaultCheckbox" type="checkbox" name="advancedOptionsVisibleByDefaultCheckbox" value="true"></td>
-                        <td>__MSG_label_Advanced_Options_Visible_By_Default__</td>
-                    </tr>
-                    <tr>
-                        <td>__MSG_label_Manually_Select_Parser__</td>
-                        <td>
-                            <select id="manuallySelectParserTag" />
-                        </td>
-                    </tr>
-                    <tr id="resetRow">
-                        <td></td>
-                        <td><button id="resetButton">__MSG_button_Reset__</button></td>
-                    </tr>
-                    <tr id="noDownloadPopupFileRow">
-                        <td><input id="noDownloadPopupCheckbox" type="checkbox" name="noDownloadPopupCheckbox" value="false"></td>
-                        <td>__MSG_label_No_Download_Popup__</td>
-                    </tr>
-                    <tr id="organizeDownloadsInFoldersRow">
-                        <td><input id="organizeDownloadsInFoldersCheckbox" type="checkbox" name="organizeDownloadsInFoldersCheckbox" value="true"></td>
-                        <td>Crear una carpeta por novela (dentro de Descargas)</td>
-                    </tr>
-                    <tr id="saveCoverImageSeparatelyRow">
-                        <td><input id="saveCoverImageSeparatelyCheckbox" type="checkbox" name="saveCoverImageSeparatelyCheckbox" value="true"></td>
-                        <td>Guardar también la portada como Portada.jpg/png</td>
-                    </tr>
-                    <tr id="disableShiftClickAlertRow">
-                      <td><input id="disableShiftClickAlertCheckbox" type="checkbox" name="disableShiftClickAlertCheckbox" value="false"></td>
-                      <td>__MSG_label_Disable_Shift_Click_Alert__</td>
-                    </tr>
-                    <tr id="disableImageResErrorRow">
-                      <td><input id="disableImageResErrorCheckbox" type="checkbox" name="disableImageResErrorCheckbox" value="false"></td>
-                      <td>__MSG_label_Disable_Image_Res_Error__</td>
-                    </tr>
-                    <tr id="disableWebpImageFormatErrorRow">
-                      <td><input id="disableWebpImageFormatErrorCheckbox" type="checkbox" name="disableWebpImageFormatErrorCheckbox" value="false"></td>
-                      <td>__MSG_label_Disable_Webp_Image_Format_Error__</td>
-                    </tr>
-                    <tr id="writeErrorHistoryToFileRow">
-                        <td><input id="writeErrorHistoryToFileCheckbox" type="checkbox" name="writeErrorHistoryToFileCheckbox" value="false"></td>
-                        <td>__MSG_label_Write_Error_History_To_File__</td>
-                    </tr>
-                    <tr id="createEpub3FileRow" hidden="true">
-                        <td><input id="createEpub3Checkbox" type="checkbox" name="createEpub3Checkbox" value="false"></td>
-                        <td>__MSG_label_Create_Epub_3__</td>
-                    </tr>
-                    <tr id="useFullTitleAsFileName">
-                        <td><input id="useFullTitleAsFileNameCheckbox" type="checkbox" name="useFullTitleAsFileNameCheckbox" value="false"></td>
-                        <td>__MSG_label_Use_Full_Title_As_File_Name__</td>
-                    </tr>
-                    <tr id="overwriteEpubWhenDuplicateFilename">
-                        <td><input id="overwriteEpubWhenDuplicateFilenameCheckbox" type="checkbox" name="overwriteEpubWhenDuplicateFilenameCheckbox" value="false"></td>
-                        <td>__MSG_label_Overwrite_Epub_When_Filename_Duplicte__</td>
-                    </tr>
                     <tr id="addInformationPageToEpub">
                         <td><input id="addInformationPageToEpubCheckbox" type="checkbox" name="addInformationPageToEpubCheckbox" value="true"></td>
                         <td>__MSG_label_Add_Information_Page_To_Epub__</td>
@@ -486,15 +459,12 @@
                         <td><input id="chaptersPageInChapterListCheckbox" type="checkbox" name="chaptersPageInChapterListbox" value="false"></td>
                         <td>__MSG_label_Chapters_Page_In_Chapters_List__</td>
                     </tr>
-                    <tr id="autoParserSelectIncludesBTSeriesPageRow">
-                        <td><input id="autoParserSelectIncludesBTSeriesPageCheckbox" type="checkbox" name="autoParserSelectIncludesBTSeriesPage" value="false"></td>
-                        <td>__MSG_label_Auto_Parser_Select_Includes_Baka_Tsuki_Series_Page_Parser__</td>
-                        <td><button id="seriesPageHelpButton">__MSG_button_Help__</button></td>
+                    <tr id="unSuperScriptAlternateTranslations" hidden="true">
+                        <td><input id="unSuperScriptCheckboxInput" type="checkbox" name="unSuperScriptCheckboxInput" value="true"></td>
+                        <td>__MSG_label_Remove_Superscript_From_Alternate_Translations__</td>
                     </tr>
-                    <tr id="skipChaptersThatFailFetch">
-                        <td><input id="skipChaptersThatFailFetchCheckbox" type="checkbox" name="skipChaptersThatFailFetchCheckbox" value="false"></td>
-                        <td>__MSG_label_Skip_Chapters_That_Fail_Fetch__</td>
-                    </tr>
+
+                    <tr class="sectionHeaderRow"><td colspan="3">Descarga y rendimiento</td></tr>
                     <tr id="maxChaptersPerEpub">
                         <td>
                             <select id="maxChaptersPerEpubTag">
@@ -519,6 +489,57 @@
                         <td><input id="overrideMinimumDelayCheckbox" type="checkbox" name="overrideMinimumDelayCheckbox" value="false"></td>
                         <td>__MSG_label_Override_Default_Minimum_Delay__</td>
                     </tr>
+                    <tr id="skipChaptersThatFailFetch">
+                        <td><input id="skipChaptersThatFailFetchCheckbox" type="checkbox" name="skipChaptersThatFailFetchCheckbox" value="false"></td>
+                        <td>__MSG_label_Skip_Chapters_That_Fail_Fetch__</td>
+                    </tr>
+                    <tr id="autoParserSelectIncludesBTSeriesPageRow">
+                        <td><input id="autoParserSelectIncludesBTSeriesPageCheckbox" type="checkbox" name="autoParserSelectIncludesBTSeriesPage" value="false"></td>
+                        <td>__MSG_label_Auto_Parser_Select_Includes_Baka_Tsuki_Series_Page_Parser__</td>
+                        <td><button id="seriesPageHelpButton">__MSG_button_Help__</button></td>
+                    </tr>
+
+                    <tr class="sectionHeaderRow"><td colspan="3">Interfaz y otros</td></tr>
+                    <tr>
+                        <td>__MSG_label_Theme__</td>
+                        <td>
+                            <select id="themeColorTag">
+                                <option class="i18n" value="LightMode">__MSG_option_ID_Theme_Always_Light__</option>
+                                <option class="i18n" value="DarkMode">__MSG_option_ID_Theme_Always_Dark__</option>
+                                <option class="i18n" selected="true" value="">__MSG_option_ID_Theme_OS_Selection__</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="styleSheetRow" hidden="true">
+                        <td>__MSG_label_Stylesheet__</td>
+                        <td><textarea id="stylesheetInput" rows="6" cols="60"></textarea></td>
+                    </tr>
+                    <tr id="stylesheetToDefaultRow" hidden="true">
+                        <td></td>
+                        <td><button id="stylesheetToDefaultButton">__MSG_button_Reset_stylesheet__</button></td>
+                    </tr>
+                    <tr id="advancedOptionsVisibleByDefaultRow">
+                        <td><input id="advancedOptionsVisibleByDefaultCheckbox" type="checkbox" name="advancedOptionsVisibleByDefaultCheckbox" value="true"></td>
+                        <td>__MSG_label_Advanced_Options_Visible_By_Default__</td>
+                    </tr>
+                    <tr>
+                        <td>__MSG_label_Manually_Select_Parser__</td>
+                        <td>
+                            <select id="manuallySelectParserTag" />
+                        </td>
+                    </tr>
+                    <tr id="resetRow">
+                        <td></td>
+                        <td><button id="resetButton">__MSG_button_Reset__</button></td>
+                    </tr>
+                    <tr id="disableShiftClickAlertRow">
+                      <td><input id="disableShiftClickAlertCheckbox" type="checkbox" name="disableShiftClickAlertCheckbox" value="false"></td>
+                      <td>__MSG_label_Disable_Shift_Click_Alert__</td>
+                    </tr>
+                    <tr id="writeErrorHistoryToFileRow">
+                        <td><input id="writeErrorHistoryToFileCheckbox" type="checkbox" name="writeErrorHistoryToFileCheckbox" value="false"></td>
+                        <td>__MSG_label_Write_Error_History_To_File__</td>
+                    </tr>
                     <tr id="IncludeInReadingListRow">
                         <td><input id="includeInReadingListCheckbox" type="checkbox" name="includeInReadingListCheckbox" value="false"></td>
                         <td>__MSG_label_Include_in_Reading_List__</td>
@@ -527,6 +548,8 @@
                         <td></td>
                         <td><button id="viewReadingListButton">__MSG_button_View_Reading_List__</button></td>
                     </tr>
+
+                    <tr class="sectionHeaderRow"><td colspan="3">Avanzado / Desarrollador</td></tr>
                     <tr id="developerStuffRow">
                         <td>__MSG_label_Developer_Stuff__</td>
                         <td>

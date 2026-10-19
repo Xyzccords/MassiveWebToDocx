@@ -163,6 +163,7 @@ var main = (function() {
         replaceLibAddToLibrary();
         parser.onStartCollecting();
         await Download.saveNovelLink();
+        await Download.saveToLinkList();
         if (userPreferences.saveCoverImageSeparately.value
                 && (Download.currentNovelName() !== Download.lastCoverSavedForNovel)) {
             // save the cover before fetching any chapters, so it (and the link above) are

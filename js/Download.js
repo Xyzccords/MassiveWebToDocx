@@ -131,6 +131,43 @@ class Download {
             .catch(err => ErrorLog.log(err));
     }
 
+    /**
+     * Appends "<Title> : <URL>" to a running master list, named after whichever channel is
+     * selected in "Lista maestra de enlaces" (e.g. "StellarGameFic.txt"). Downloads can't be
+     * appended to, so the full list is kept in extension storage and the whole file is
+     * rewritten each time.
+     */
+    static async saveToLinkList() {
+        let channel = document.getElementById("linkListChannelSelect")?.value;
+        if (util.isNullOrEmpty(channel)) {
+            return;
+        }
+        let novelTitle = document.getElementById("titleInput")?.value;
+        let novelUrl = document.getElementById("startingUrlInput")?.value;
+        if (util.isNullOrEmpty(novelTitle) || util.isNullOrEmpty(novelUrl)) {
+            return;
+        }
+        let dedupKey = channel + "|" + novelTitle;
+        if (dedupKey === Download.lastLinkListEntryFor) {
+            return; // already appended for this novel (e.g. an earlier AutoBatch part)
+        }
+        Download.lastLinkListEntryFor = dedupKey;
+
+        let storageKey = "linkList_" + channel;
+        let stored = await new Promise(resolve => chrome.storage.local.get(storageKey, resolve));
+        let lines = (stored[storageKey] || "").split("\n").filter(line => line !== "");
+        let newLine = novelTitle + " : " + novelUrl;
+        if (!lines.includes(newLine)) {
+            lines.push(newLine);
+            await new Promise(resolve => chrome.storage.local.set({[storageKey]: lines.join("\n") + "\n"}, resolve));
+        }
+
+        let userPreferences = main.getUserPreferences();
+        let blob = new Blob([lines.join("\n") + "\n"], {type: "text/plain"});
+        await Download.save(blob, channel + ".txt", true, userPreferences.noDownloadPopup.value)
+            .catch(err => ErrorLog.log(err));
+    }
+
     /** write blob to "Downloads" directory */
     static save(blob, fileName, overwriteExisting, backgroundDownload) {
         let options = {
@@ -240,4 +277,5 @@ Download.EXTENSION_BY_MEDIA_TYPE = {
 };
 Download.lastCoverSavedForNovel = null;
 Download.lastLinkSavedForNovel = null;
+Download.lastLinkListEntryFor = null;
 Download.init();

@@ -101,6 +101,7 @@ class UserPreferences { // eslint-disable-line no-unused-vars
         this.outputFormat = this.addPreference("outputFormat", "outputFormatSelect", "docx");
         this.organizeDownloadsInFolders = this.addPreference("organizeDownloadsInFolders", "organizeDownloadsInFoldersCheckbox", true);
         this.saveCoverImageSeparately = this.addPreference("saveCoverImageSeparately", "saveCoverImageSeparatelyCheckbox", true);
+        this.linkListChannel = this.addPreference("linkListChannel", "linkListChannelSelect", "");
         this.chaptersPageInChapterList = this.addPreference("chaptersPageInChapterList", "chaptersPageInChapterListCheckbox", false);
         this.autoSelectBTSeriesPage = this.addPreference("autoSelectBTSeriesPage", "autoParserSelectIncludesBTSeriesPageCheckbox", false);
         this.removeAuthorNotes = this.addPreference("removeAuthorNotes", "removeAuthorNotesCheckbox", false);
