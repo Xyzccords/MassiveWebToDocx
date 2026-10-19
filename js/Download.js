@@ -112,6 +112,25 @@ class Download {
             .catch(err => ErrorLog.log(err));
     }
 
+    /** Saves the novel's source URL as "Link.txt", alongside the packed file, once per novel */
+    static saveNovelLink() {
+        let startingUrlInput = document.getElementById("startingUrlInput");
+        let novelUrl = startingUrlInput ? startingUrlInput.value : "";
+        if (util.isNullOrEmpty(novelUrl)) {
+            return Promise.resolve();
+        }
+        let novelName = Download.currentNovelName();
+        if (novelName === Download.lastLinkSavedForNovel) {
+            return Promise.resolve(); // already saved for this novel (e.g. an earlier AutoBatch part)
+        }
+        Download.lastLinkSavedForNovel = novelName;
+        let userPreferences = main.getUserPreferences();
+        let fileName = Download.withNovelFolder("Link.txt");
+        let blob = new Blob([novelUrl], {type: "text/plain"});
+        return Download.save(blob, fileName, userPreferences.overwriteExistingEpub.value, userPreferences.noDownloadPopup.value)
+            .catch(err => ErrorLog.log(err));
+    }
+
     /** write blob to "Downloads" directory */
     static save(blob, fileName, overwriteExisting, backgroundDownload) {
         let options = {
@@ -220,4 +239,5 @@ Download.EXTENSION_BY_MEDIA_TYPE = {
     "image/svg+xml": "svg"
 };
 Download.lastCoverSavedForNovel = null;
+Download.lastLinkSavedForNovel = null;
 Download.init();

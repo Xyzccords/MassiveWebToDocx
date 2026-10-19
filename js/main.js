@@ -165,6 +165,7 @@ var main = (function() {
         await parser.fetchContent();
         let content = await packEpub(metaInfo);
         await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
+        await Download.saveNovelLink();
         // Enable button here.  If user cancels save dialog
         // the promise never returns
         window.workInProgress = false;
