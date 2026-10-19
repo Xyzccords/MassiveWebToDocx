@@ -133,9 +133,9 @@ class Download {
 
     /**
      * Appends "<Title> : <URL>" to a running master list, named after whichever channel is
-     * selected in "Lista maestra de enlaces" (e.g. "StellarGameFic.txt"). Downloads can't be
-     * appended to, so the full list is kept in extension storage and the whole file is
-     * rewritten each time.
+     * selected in "Lista maestra de enlaces" (e.g. "Audiolibros Project/StellarGameFicLinks.txt",
+     * inside the browser's configured Downloads folder). Downloads can't be appended to, so the
+     * full list is kept in extension storage and the whole file is rewritten each time.
      */
     static async saveToLinkList() {
         let channel = document.getElementById("linkListChannelSelect")?.value;
@@ -164,7 +164,8 @@ class Download {
 
         let userPreferences = main.getUserPreferences();
         let blob = new Blob([lines.join("\n") + "\n"], {type: "text/plain"});
-        await Download.save(blob, channel + ".txt", true, userPreferences.noDownloadPopup.value)
+        let fileName = "Audiolibros Project/" + channel + "Links.txt";
+        await Download.save(blob, fileName, true, userPreferences.noDownloadPopup.value)
             .catch(err => ErrorLog.log(err));
     }
 
