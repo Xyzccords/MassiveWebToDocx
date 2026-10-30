@@ -52,6 +52,20 @@ class Download {
     }
 
     /**
+     * True if a completed download already on disk has a path containing partialPath (e.g.
+     * "NovelFolder/1-20.docx" or "NovelFolder/Portada."). The extension has no direct filesystem
+     * access, so this is how it tells whether a chapter range/cover/link from an earlier,
+     * possibly-interrupted run is already there, to avoid re-fetching and re-downloading it.
+     */
+    static async anyDownloadMatches(partialPath) {
+        let normalized = partialPath.replace(/\\/g, "/");
+        let results = util.isFirefox()
+            ? await browser.downloads.search({state: "complete", exists: true})
+            : await new Promise(resolve => chrome.downloads.search({state: "complete", exists: true}, resolve));
+        return results.some(item => item.filename.replace(/\\/g, "/").includes(normalized));
+    }
+
+    /**
      * When "organizeDownloadsInFolders" is on, prefix fileName with a
      * subfolder named after the novel (chrome.downloads / browser.downloads
      * create any subfolders in the path automatically, inside the browser's
@@ -113,19 +127,23 @@ class Download {
     }
 
     /** Saves the novel's source URL as "Link.txt", alongside the packed file, once per novel */
-    static saveNovelLink() {
+    static async saveNovelLink() {
         let startingUrlInput = document.getElementById("startingUrlInput");
         let novelUrl = startingUrlInput ? startingUrlInput.value : "";
         if (util.isNullOrEmpty(novelUrl)) {
-            return Promise.resolve();
+            return;
         }
         let novelName = Download.currentNovelName();
         if (novelName === Download.lastLinkSavedForNovel) {
-            return Promise.resolve(); // already saved for this novel (e.g. an earlier AutoBatch part)
+            return; // already saved for this novel (e.g. an earlier AutoBatch part)
+        }
+        let fileName = Download.withNovelFolder("Link.txt");
+        if (await Download.anyDownloadMatches(fileName)) {
+            Download.lastLinkSavedForNovel = novelName; // already on disk from an earlier run
+            return;
         }
         Download.lastLinkSavedForNovel = novelName;
         let userPreferences = main.getUserPreferences();
-        let fileName = Download.withNovelFolder("Link.txt");
         let blob = new Blob([novelUrl], {type: "text/plain"});
         return Download.save(blob, fileName, userPreferences.overwriteExistingEpub.value, userPreferences.noDownloadPopup.value)
             .catch(err => ErrorLog.log(err));

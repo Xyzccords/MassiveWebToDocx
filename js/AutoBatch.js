@@ -42,6 +42,7 @@ class AutoBatch {
 
         button.disabled = true;
         let skippedRange = null;
+        let resumedCount = 0;
 
         try {
             for (let i = 0; i < total; i += batchSize) {
@@ -64,6 +65,18 @@ class AutoBatch {
 
                 fileNameInput.value = chapterRange;
 
+                // resuming an earlier, possibly-interrupted run: if this range's output file
+                // is already on disk, don't re-fetch/re-pack it, just move on to the next one
+                let expectedFileName = Download.CustomFilename();
+                if (await Download.anyDownloadMatches(expectedFileName)) {
+                    resumedCount++;
+                    if (statusSpan) {
+                        statusSpan.textContent =
+                            `Capítulos ${chapterRange} ya existen, saltando...`;
+                    }
+                    continue;
+                }
+
                 if (statusSpan) {
                     statusSpan.textContent =
                         `Procesando capítulos ${chapterRange} de ${total}...`;
@@ -78,9 +91,10 @@ class AutoBatch {
 
             fileNameInput.value = baseFileName;
             if (statusSpan) {
+                let resumedNote = resumedCount > 0 ? ` (${resumedCount} ya estaban hechos, se saltaron)` : "";
                 statusSpan.textContent = skippedRange
-                    ? `Listo. Capítulos ${skippedRange} quedaron incompletos, no se procesaron.`
-                    : "Listo. Revisa tu carpeta de descargas.";
+                    ? `Listo${resumedNote}. Capítulos ${skippedRange} quedaron incompletos, no se procesaron.`
+                    : `Listo${resumedNote}. Revisa tu carpeta de descargas.`;
             }
         } finally {
             button.disabled = false;

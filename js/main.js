@@ -166,11 +166,16 @@ var main = (function() {
         await Download.saveToLinkList();
         if (userPreferences.saveCoverImageSeparately.value
                 && (Download.currentNovelName() !== Download.lastCoverSavedForNovel)) {
-            // save the cover before fetching any chapters, so it (and the link above) are
-            // already on disk even if a long run later fails partway through
-            parser.imageCollector.setCoverImageUrl(CoverImageUI.getCoverImageUrl());
-            await parser.imageCollector.fetchImages(() => { }, document.getElementById("startingUrlInput").value);
-            await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
+            if (await Download.anyDownloadMatches(Download.withNovelFolder("Portada."))) {
+                // already on disk from an earlier run: don't even fetch it again
+                Download.lastCoverSavedForNovel = Download.currentNovelName();
+            } else {
+                // save the cover before fetching any chapters, so it (and the link above) are
+                // already on disk even if a long run later fails partway through
+                parser.imageCollector.setCoverImageUrl(CoverImageUI.getCoverImageUrl());
+                await parser.imageCollector.fetchImages(() => { }, document.getElementById("startingUrlInput").value);
+                await Download.saveCoverImage(parser.imageCollector.coverImageInfo);
+            }
         }
         await parser.fetchContent();
         let content = await packEpub(metaInfo);
