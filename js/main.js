@@ -166,7 +166,7 @@ var main = (function() {
         await Download.saveToLinkList();
         if (userPreferences.saveCoverImageSeparately.value
                 && (Download.currentNovelName() !== Download.lastCoverSavedForNovel)) {
-            if (await Download.anyDownloadMatches(Download.withNovelFolder("Portada."))) {
+            if (await Download.anyFileWithPrefixExists(Download.withNovelFolder("Portada."))) {
                 // already on disk from an earlier run: don't even fetch it again
                 Download.lastCoverSavedForNovel = Download.currentNovelName();
             } else {
@@ -572,7 +572,43 @@ var main = (function() {
         document.getElementById("viewFiltersButton").onclick = () => sbFiltersShow();
         document.getElementById("sbClose").onclick = () => sbHide();
         document.getElementById("viewReadingListButton").onclick = () => showReadingList();
+        document.getElementById("chooseFileSystemFolderButton").onclick = onChooseFileSystemFolderClick;
+        document.getElementById("forgetFileSystemFolderButton").onclick = onForgetFileSystemFolderClick;
         window.addEventListener("beforeunload", onUnloadEvent);
+    }
+
+    async function onChooseFileSystemFolderClick() {
+        try {
+            await FileSystemStorage.chooseRootFolder();
+        } catch {
+            // user closed the native picker without choosing anything
+        }
+        await refreshFileSystemFolderStatus();
+    }
+
+    async function onForgetFileSystemFolderClick() {
+        await FileSystemStorage.forgetRootFolder();
+        await refreshFileSystemFolderStatus();
+    }
+
+    async function refreshFileSystemFolderStatus() {
+        let statusSpan = document.getElementById("fileSystemFolderStatus");
+        let chooseButton = document.getElementById("chooseFileSystemFolderButton");
+        let forgetButton = document.getElementById("forgetFileSystemFolderButton");
+        if (!FileSystemStorage.isSupported()) {
+            statusSpan.textContent = "No disponible en este navegador (usando las Descargas normales)";
+            chooseButton.disabled = true;
+            forgetButton.hidden = true;
+            return;
+        }
+        let name = await FileSystemStorage.currentFolderName();
+        if (name == null) {
+            statusSpan.textContent = "Ninguna elegida (usando las Descargas normales de Chrome)";
+            forgetButton.hidden = true;
+        } else {
+            statusSpan.textContent = `Carpeta elegida: "${name}"`;
+            forgetButton.hidden = false;
+        }
     }
 	
 	
@@ -653,6 +689,7 @@ var main = (function() {
             getAdditionalMetadataSection().hidden = !userPreferences.ShowMoreMetadataOptions.value;
             addEventHandlers();
             populateControls();
+            refreshFileSystemFolderStatus();
             if (util.isFirefox()) {
                 Firefox.startWebRequestListeners();
             }

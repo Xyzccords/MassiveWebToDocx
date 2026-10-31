@@ -358,6 +358,14 @@
                         <td><input id="noDownloadPopupCheckbox" type="checkbox" name="noDownloadPopupCheckbox" value="false"></td>
                         <td>__MSG_label_No_Download_Popup__</td>
                     </tr>
+                    <tr id="chooseFileSystemFolderRow">
+                        <td><button id="chooseFileSystemFolderButton">Elegir carpeta...</button></td>
+                        <td>
+                            <span id="fileSystemFolderStatus">Ninguna elegida (usando las Descargas normales de Chrome)</span>
+                            <button id="forgetFileSystemFolderButton" hidden="true">Quitar</button>
+                            <p style="margin:2px 0 0 0; font-size: smaller;">Si eliges una carpeta acá, los archivos se escriben directo ahí: nunca crea "(1)" duplicados, y sabe de verdad si un capítulo ya está hecho.</p>
+                        </td>
+                    </tr>
                     <tr id="createEpub3FileRow" hidden="true">
                         <td><input id="createEpub3Checkbox" type="checkbox" name="createEpub3Checkbox" value="false"></td>
                         <td>__MSG_label_Create_Epub_3__</td>
@@ -667,6 +675,7 @@
         <script src="js/Util.js"></script>
         <script src="js/FootnoteExtractor.js"></script>
         <script src="js/Firefox.js"></script>
+        <script src="js/FileSystemStorage.js"></script>
         <script src="js/Download.js"></script>
         <script src="js/HttpClient.js"></script>
         <script src="js/EpubItem.js"></script>

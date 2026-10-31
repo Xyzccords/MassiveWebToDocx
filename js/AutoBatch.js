@@ -68,7 +68,7 @@ class AutoBatch {
                 // resuming an earlier, possibly-interrupted run: if this range's output file
                 // is already on disk, don't re-fetch/re-pack it, just move on to the next one
                 let expectedFileName = Download.CustomFilename();
-                if (await Download.anyDownloadMatches(expectedFileName)) {
+                if (await Download.fileAlreadyExists(expectedFileName)) {
                     resumedCount++;
                     if (statusSpan) {
                         statusSpan.textContent =

@@ -52,12 +52,41 @@ class Download {
     }
 
     /**
-     * True if a completed download already on disk has a path containing partialPath (e.g.
-     * "NovelFolder/1-20.docx" or "NovelFolder/Portada."). The extension has no direct filesystem
-     * access, so this is how it tells whether a chapter range/cover/link from an earlier,
-     * possibly-interrupted run is already there, to avoid re-fetching and re-downloading it.
+     * True if "path" (e.g. "NovelFolder/1-20.docx") already exists, so a chapter range/Link.txt
+     * from an earlier, possibly-interrupted run can be skipped instead of re-fetched. Uses the
+     * real folder chosen via "Elegir carpeta de descargas" when there is one (an exact,
+     * reliable check); otherwise falls back to guessing from Chrome's download *history*, which
+     * is only approximate (see anyDownloadHistoryMatches).
      */
-    static async anyDownloadMatches(partialPath) {
+    static async fileAlreadyExists(path) {
+        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(false)) != null) {
+            return await FileSystemStorage.fileExists(path);
+        }
+        return await Download.anyDownloadHistoryMatches(path);
+    }
+
+    /**
+     * Same as fileAlreadyExists, but for when the extension (file type) is unknown ahead of time
+     * -- true if any file under the novel's folder starts with the given name, e.g.
+     * Download.withNovelFolder("Portada.") matching "Portada.jpg" or "Portada.png".
+     */
+    static async anyFileWithPrefixExists(combinedPathPrefix) {
+        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(false)) != null) {
+            let splitAt = combinedPathPrefix.lastIndexOf("/");
+            let dirPath = (splitAt >= 0) ? combinedPathPrefix.slice(0, splitAt) : "";
+            let prefix = (splitAt >= 0) ? combinedPathPrefix.slice(splitAt + 1) : combinedPathPrefix;
+            return await FileSystemStorage.anyFileWithPrefix(dirPath, prefix);
+        }
+        return await Download.anyDownloadHistoryMatches(combinedPathPrefix);
+    }
+
+    /**
+     * True if a completed download already on disk has a path containing partialPath. This is
+     * only an approximation (Chrome's download *history*, not the actual disk), used as a
+     * fallback when no real folder has been chosen via File System Access (Firefox always, or
+     * Chrome before the user picks one).
+     */
+    static async anyDownloadHistoryMatches(partialPath) {
         let normalized = partialPath.replace(/\\/g, "/");
         let results = util.isFirefox()
             ? await browser.downloads.search({state: "complete", exists: true})
@@ -138,7 +167,7 @@ class Download {
             return; // already saved for this novel (e.g. an earlier AutoBatch part)
         }
         let fileName = Download.withNovelFolder("Link.txt");
-        if (await Download.anyDownloadMatches(fileName)) {
+        if (await Download.fileAlreadyExists(fileName)) {
             Download.lastLinkSavedForNovel = novelName; // already on disk from an earlier run
             return;
         }
@@ -187,8 +216,17 @@ class Download {
             .catch(err => ErrorLog.log(err));
     }
 
-    /** write blob to "Downloads" directory */
-    static save(blob, fileName, overwriteExisting, backgroundDownload) {
+    /**
+     * Writes blob to fileName. When a real folder has been chosen via "Elegir carpeta de
+     * descargas" (File System Access), it's written straight there -- exact overwrite behavior,
+     * no "(1)" duplicates, no Save As dialog. Otherwise falls back to chrome.downloads.download(),
+     * which only approximates all of that.
+     */
+    static async save(blob, fileName, overwriteExisting, backgroundDownload) {
+        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(false)) != null) {
+            await FileSystemStorage.writeFile(fileName, blob, overwriteExisting);
+            return;
+        }
         let options = {
             url: URL.createObjectURL(blob),
             filename: fileName,
