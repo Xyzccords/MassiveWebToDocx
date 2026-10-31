@@ -59,7 +59,7 @@ class Download {
      * is only approximate (see anyDownloadHistoryMatches).
      */
     static async fileAlreadyExists(path) {
-        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(false)) != null) {
+        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(true)) != null) {
             return await FileSystemStorage.fileExists(path);
         }
         return await Download.anyDownloadHistoryMatches(path);
@@ -71,7 +71,7 @@ class Download {
      * Download.withNovelFolder("Portada.") matching "Portada.jpg" or "Portada.png".
      */
     static async anyFileWithPrefixExists(combinedPathPrefix) {
-        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(false)) != null) {
+        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(true)) != null) {
             let splitAt = combinedPathPrefix.lastIndexOf("/");
             let dirPath = (splitAt >= 0) ? combinedPathPrefix.slice(0, splitAt) : "";
             let prefix = (splitAt >= 0) ? combinedPathPrefix.slice(splitAt + 1) : combinedPathPrefix;
@@ -223,7 +223,7 @@ class Download {
      * which only approximates all of that.
      */
     static async save(blob, fileName, overwriteExisting, backgroundDownload) {
-        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(false)) != null) {
+        if (FileSystemStorage.isSupported() && (await FileSystemStorage.getRootFolder(true)) != null) {
             await FileSystemStorage.writeFile(fileName, blob, overwriteExisting);
             return;
         }

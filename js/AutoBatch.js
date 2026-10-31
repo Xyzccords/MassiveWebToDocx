@@ -40,6 +40,13 @@ class AutoBatch {
         let fileNameInput = document.getElementById("fileNameInput");
         let baseFileName = fileNameInput.value || "novela";
 
+        // re-grant the file-system permission now, while this click is still a fresh user
+        // gesture -- once granted it stays granted for the rest of this tab, so every check
+        // deeper in the loop (after sleeps/awaits, with no gesture left) can just read it
+        if (FileSystemStorage.isSupported()) {
+            await FileSystemStorage.getRootFolder(true);
+        }
+
         button.disabled = true;
         let skippedRange = null;
         let resumedCount = 0;
